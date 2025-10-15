@@ -1,0 +1,40 @@
+CREATE TABLE Authors (
+    author_id INTEGER PRIMARY KEY,
+    full_name TEXT NOT NULL,
+    birth_year INTEGER
+);
+
+CREATE TABLE Genres (
+    genre_id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE Users (
+    user_id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    registration_date DATE NOT NULL
+);
+
+CREATE TABLE Books (
+    book_id INTEGER PRIMARY KEY,
+    title TEXT NOT NULL,
+    publish_year INTEGER,
+    author_id INTEGER NOT NULL,
+    genre_id INTEGER NOT NULL,
+    FOREIGN KEY (author_id) REFERENCES Authors(author_id) ON DELETE CASCADE,
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id) ON DELETE RESTRICT
+);
+
+CREATE TABLE Reviews (
+    review_id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    book_id INTEGER NOT NULL,
+    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT,
+    review_date DATE NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (book_id) REFERENCES Books(book_id) ON DELETE CASCADE,
+    UNIQUE (user_id, book_id) -- Гарантирует, что пользователь может оставить только один отзыв на книгу
+);
